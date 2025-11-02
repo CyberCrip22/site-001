@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PNEUBRARTO - Loja Virtual de Pneus</title>
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #1e3a8a;
+            color: white;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header e Logo */
+        header {
+            background-color: #1e40af;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-direction: column;
+        }
+        
+        .logo-main {
+            font-size: 3rem;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        
+        .logo-subtitle {
+            font-size: 1.2rem;
+            color: #fbbf24;
+            font-weight: bold;
+        }
+        
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+        
+        nav ul li {
+            margin: 0 15px;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: #fbbf24;
+        }
+        
+        /* Carrinho de Compras */
+        .cart-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            background-color: #fbbf24;
+            color: #1e3a8a;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+        
+        .cart-icon:hover {
+            background-color: #f59e0b;
+            transform: scale(1.1);
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 380px;
+            height: 100vh;
+            background-color: #1e40af;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .cart-sidebar.active {
+            right: 0;
+        }
+        
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #3b82f6;
+        }
+        
+        .cart-title {
+            font-size: 1.5rem;
+            color: #fbbf24;
+        }
+        
+        .close-cart {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .cart-items {
+            margin-bottom: 20px;
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #3b82f6;
+        }
+        
+        .item-info {
+            flex: 1;
+        }
+        
+        .item-name {
+            font-weight: bold;
+        }
+        
+        .item-price {
+            color: #fbbf24;
+        }
+        
+        .item-quantity {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        
+        .quantity-btn {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .quantity {
+            margin: 0 10px;
+        }
+        
+        .remove-item {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        
+        .cart-total {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: right;
+            margin: 20px 0;
+            padding-top: 10px;
+            border-top: 1px solid #3b82f6;
+        }
+        
+        .checkout-btn {
+            display: block;
+            width: 100%;
+            background-color: #fbbf24;
+            color: #1e3a8a;
+            border: none;
+            padding: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .checkout-btn:hover {
+            background-color: #f59e0b;
+        }
+        
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+        
+        .cart-overlay.active {
+            display: block;
+        }
+        
+        /* Modal de Pagamento */
+        .payment-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        
+        .payment-modal.active {
+            display: flex;
+        }
+        
+        .payment-content {
+            background-color: #1e40af;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .payment-title {
+            font-size: 1.8rem;
+            color: #fbbf24;
+            margin-bottom: 20px;
+        }
+        
+        .payment-instructions {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+        
+        .qr-code-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px auto;
+            display: inline-block;
+        }
+        
+        .pix-key {
+            background-color: #1e3a8a;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 1.2rem;
+            word-break: break-all;
+        }
+        
+        .copy-btn {
+            background-color: #fbbf24;
+            color: #1e3a8a;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px 0;
+            transition: background-color 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background-color: #f59e0b;
+        }
+        
+        .close-payment {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+        
+        .close-payment:hover {
+            background-color: #2563eb;
+        }
+        
+        /* Seção de Promoção */
+        .promo-section {
+            background: linear-gradient(135deg, #1e3a8a, #1e40af);
+            padding: 60px 0;
+            text-align: center;
+            margin: 30px 0;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        
+        .delivery-info {
+            background-color: #10b981;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .delivery-icon {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .promo-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #fbbf24;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .promo-price {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #fbbf24;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .promo-description {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background-color: #fbbf24;
+            color: #1e3a8a;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .cta-button:hover {
+            background-color: #f59e0b;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Filtros de Catálogo */
+        .catalog-filters {
+            background-color: #1e40af;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .filter-label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #fbbf24;
+        }
+        
+        .filter-select {
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: none;
+            background-color: #1e3a8a;
+            color: white;
+            min-width: 150px;
+        }
+        
+        /* Seção de Catálogo */
+        .catalog-section {
+            padding: 60px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 40px;
+            color: #fbbf24;
+        }
+        
+        .vehicle-category {
+            margin-bottom: 50px;
+        }
+        
+        .category-title {
+            font-size: 1.8rem;
+            color: #fbbf24;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3b82f6;
+        }
+        
+        .rim-size-section {
+            margin-bottom: 30px;
+        }
+        
+        .rim-title {
+            font-size: 1.4rem;
+            color: #93c5fd;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .rim-title.popular {
+            color: #fbbf24;
+            font-weight: bold;
+        }
+        
+        .popular-badge {
+            background-color: #fbbf24;
+            color: #1e3a8a;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+        
+        .rim-icon {
+            margin-right: 10px;
+            font-size: 1.6rem;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        
+        .product-card {
+            background-color: #1e40af;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .product-image {
+            height: 180px;
+            background-color: #3b82f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .product-info {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .product-name {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+        
+        .product-details {
+            color: #c7d2fe;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .product-price {
+            font-size: 1.5rem;
+            color: #fbbf24;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .product-button {
+            display: block;
+            text-align: center;
+            background-color: #3b82f6;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            margin-top: auto;
+        }
+        
+        .product-button:hover {
+            background-color: #2563eb;
+        }
+        
+        /* Seção de Serviços */
+        .services-section {
+            padding: 60px 0;
+            background-color: #1e40af;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        
+        .service-card {
+            background-color: #1e3a8a;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .service-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #fbbf24;
+        }
+        
+        .service-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        
+        /* Modal de Frete */
+        .shipping-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        
+        .shipping-modal.active {
+            display: flex;
+        }
+        
+        .shipping-content {
+            background-color: #1e40af;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .shipping-title {
+            font-size: 1.8rem;
+            color: #fbbf24;
+            margin-bottom: 20px;
+        }
+        
+        .shipping-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+        
+        .form-label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-input {
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            background-color: #1e3a8a;
+            color: white;
+        }
+        
+        .shipping-result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #1e3a8a;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .shipping-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #3b82f6;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .shipping-option:hover {
+            background-color: #2563eb;
+        }
+        
+        .shipping-option.selected {
+            background-color: #fbbf24;
+            color: #1e3a8a;
+        }
+        
+        .shipping-details {
+            font-size: 0.8rem;
+            color: #c7d2fe;
+            margin-top: 5px;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #1e3a8a;
+            padding: 40px 0;
+            text-align: center;
+            border-top: 2px solid #1e40af;
+        }
+        
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .contact-info {
+            margin-bottom: 20px;
+        }
+        
+        .social-links {
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            color: white;
+            margin: 0 10px;
+            font-size: 1.5rem;
+            text-decoration: none;
+        }
+        
+        .copyright {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #93c5fd;
+        }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .logo-main {
+                font-size: 2.2rem;
+            }
+            
+            .promo-title {
+                font-size: 2rem;
+            }
+            
+            .promo-price {
+                font-size: 2.5rem;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            nav ul li {
+                margin: 5px 0;
+            }
+            
+            .cart-sidebar {
+                width: 100%;
+                right: -100%;
+            }
+            
+            .payment-content {
+                width: 95%;
+                padding: 20px;
+            }
+            
+            .catalog-filters {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .filter-select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Overlay do Carrinho -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    
+    <!-- Modal de Pagamento -->
+    <div class="payment-modal" id="paymentModal">
+        <div class="payment-content">
+            <h2 class="payment-title">Pagamento PIX</h2>
+            <p class="payment-instructions">Escaneie o QR Code abaixo ou copie a chave PIX para realizar o pagamento:</p>
+            
+            <div class="qr-code-container">
+                <div id="qrcode"></div>
+            </div>
+            
+            <p class="payment-instructions">Chave PIX (Telefone):</p>
+            <div class="pix-key" id="pixKey">17535339700</div>
+            
+            <button class="copy-btn" id="copyPixKey">Copiar Chave PIX</button>
+            
+            <p class="payment-instructions">Após o pagamento, seu pedido será processado e enviado em até 7 dias úteis.</p>
+            
+            <button class="close-payment" id="closePayment">Fechar</button>
+        </div>
+    </div>
+    
+    <!-- Modal de Frete -->
+    <div class="shipping-modal" id="shippingModal">
+        <div class="shipping-content">
+            <h2 class="shipping-title">Calcular Frete</h2>
+            <form class="shipping-form" id="shippingForm">
+                <div class="form-group">
+                    <label class="form-label" for="cep">CEP</label>
+                    <input type="text" class="form-input" id="cep" placeholder="Digite seu CEP" required maxlength="8">
+                </div>
+                <button type="submit" class="checkout-btn">Calcular Frete</button>
+            </form>
+            <div class="shipping-result" id="shippingResult">
+                <h3>Opções de Entrega</h3>
+                <div class="shipping-option" data-shipping="correios">
+                    <div>
+                        <strong>Correios - PAC</strong>
+                        <div class="shipping-details">Entrega em 7-15 dias úteis</div>
+                    </div>
+                    <span id="correiosShipping">R$ 0,00</span>
+                </div>
+                <div class="shipping-option" data-shipping="sedex">
+                    <div>
+                        <strong>Correios - SEDEX</strong>
+                        <div class="shipping-details">Entrega em 3-7 dias úteis</div>
+                    </div>
+                    <span id="sedexShipping">R$ 0,00</span>
+                </div>
+                <button class="checkout-btn" id="selectShipping" disabled>Selecionar Frete</button>
+            </div>
+            <button class="close-payment" id="closeShipping">Fechar</button>
+        </div>
+    </div>
+    
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="logo-container">
+                <div class="logo-main">PNEUBRARTO</div>
+                <div class="logo-subtitle">LOJA VIRTUAL DE PNEUS</div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#home">Início</a></li>
+                    <li><a href="#catalog">Catálogo</a></li>
+                    <li><a href="#promo">Promoções</a></li>
+                    <li><a href="#services">Serviços</a></li>
+                    <li><a href="#contact">Contato</a></li>
+                </ul>
+            </nav>
+            
+            <!-- Ícone do Carrinho -->
+            <div class="cart-icon" id="cartIcon">
+                🛒
+                <div class="cart-count" id="cartCount">0</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Carrinho de Compras -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h2 class="cart-title">Seu Carrinho</h2>
+            <button class="close-cart" id="closeCart">✕</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <!-- Itens do carrinho serão inseridos aqui via JavaScript -->
+        </div>
+        <div class="cart-total">
+            Subtotal: R$ <span id="cartSubtotal">0,00</span>
+        </div>
+        <div class="cart-total" id="shippingCostContainer" style="display: none;">
+            Frete: R$ <span id="shippingCost">0,00</span>
+        </div>
+        <div class="cart-total">
+            Total: R$ <span id="cartTotal">0,00</span>
+        </div>
+        <button class="checkout-btn" id="checkoutBtn">Finalizar Compra</button>
+    </div>
+
+    <!-- Seção de Promoção -->
+    <section class="promo-section" id="promo">
+        <div class="container">
+            <div class="delivery-info">
+                <span class="delivery-icon">🚚</span>
+                Entrega pelos Correios para todo o Brasil
+            </div>
+            <h1 class="promo-title">PROMOÇÃO ESPECIAL</h1>
+            <p class="promo-description">Aproveite nossa oferta imperdível para trocar todos os pneus do seu veículo</p>
+            <div class="promo-price">4 PNEUS POR R$ 600,00</div>
+            <p class="promo-description">Pneus de qualidade com a melhor relação custo-benefício do mercado</p>
+            <a href="#catalog" class="cta-button">VER CATÁLOGO COMPLETO</a>
+        </div>
+    </section>
+
+    <!-- Seção de Catálogo -->
+    <section class="catalog-section" id="catalog">
+        <div class="container">
+            <h2 class="section-title">CATÁLOGO DE PNEUS</h2>
+            
+            <!-- Filtros -->
+            <div class="catalog-filters">
+                <div class="filter-group">
+                    <label class="filter-label" for="vehicleType">Tipo de Veículo</label>
+                    <select class="filter-select" id="vehicleType">
+                        <option value="all">Todos os Veículos</option>
+                        <option value="car">Carros</option>
+                        <option value="suv">SUVs</option>
+                        <option value="pickup">Caminhonetes</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label" for="rimSize">Aro</label>
+                    <select class="filter-select" id="rimSize">
+                        <option value="all">Todos os Aros</option>
+                        <option value="13">Aro 13</option>
+                        <option value="14">Aro 14</option>
+                        <option value="15">Aro 15</option>
+                        <option value="16">Aro 16</option>
+                        <option value="17">Aro 17</option>
+                        <option value="18">Aro 18</option>
+                        <option value="19">Aro 19</option>
+                        <option value="20">Aro 20</option>
+                        <option value="21">Aro 21</option>
+                        <option value="22">Aro 22</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Carros -->
+            <div class="vehicle-category" data-category="car">
+                <h3 class="category-title">Pneus para Carros</h3>
+                
+                <!-- Aro 13 -->
+                <div class="rim-size-section" data-rim="13">
+                    <h4 class="rim-title">Aro 13</h4>
+                    <div class="products-grid">
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Pneu+Aro+13" alt="Pneu Aro 13">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Pirelli Cinturato Aro 13</h3>
+                                <p class="product-details">165/70 R13 79T - Compacto</p>
+                                <p class="product-price">R$ 280,00</p>
+                                <button class="product-button" data-id="113" data-name="Pirelli Cinturato Aro 13" data-price="280">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Pneu+Aro+13" alt="Pneu Aro 13">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Goodyear Efficient Aro 13</h3>
+                                <p class="product-details">155/80 R13 79Q - Econômico</p>
+                                <p class="product-price">R$ 260,00</p>
+                                <button class="product-button" data-id="114" data-name="Goodyear Efficient Aro 13" data-price="260">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Aro 14 -->
+                <div class="rim-size-section" data-rim="14">
+                    <h4 class="rim-title">Aro 14</h4>
+                    <div class="products-grid">
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Pneu+Aro+14" alt="Pneu Aro 14">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Michelin Energy Aro 14</h3>
+                                <p class="product-details">175/65 R14 82H - Econômico</p>
+                                <p class="product-price">R$ 320,00</p>
+                                <button class="product-button" data-id="115" data-name="Michelin Energy Aro 14" data-price="320">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Pneu+Aro+14" alt="Pneu Aro 14">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Bridgestone Ecopia Aro 14</h3>
+                                <p class="product-details">185/60 R14 82H - Eficiência</p>
+                                <p class="product-price">R$ 340,00</p>
+                                <button class="product-button" data-id="116" data-name="Bridgestone Ecopia Aro 14" data-price="340">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Aro 15 (Popular) -->
+                <div class="rim-size-section" data-rim="15">
+                    <h4 class="rim-title popular">Aro 15 <span class="popular-badge">MAIS VENDIDO</span></h4>
+                    <div class="products-grid">
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Pirelli+P1+Cinturato" alt="Pirelli P1 Cinturato">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Pirelli P1 Cinturato</h3>
+                                <p class="product-details">195/65 R15 91H - Alto Desempenho</p>
+                                <p class="product-price">R$ 420,00</p>
+                                <button class="product-button" data-id="101" data-name="Pirelli P1 Cinturato Aro 15" data-price="420">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Goodyear+EfficientGrip" alt="Goodyear EfficientGrip">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Goodyear EfficientGrip</h3>
+                                <p class="product-details">185/60 R15 84H - Baixo Ruído</p>
+                                <p class="product-price">R$ 380,00</p>
+                                <button class="product-button" data-id="102" data-name="Goodyear EfficientGrip Aro 15" data-price="380">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Michelin+Energy+Saver" alt="Michelin Energy Saver">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Michelin Energy Saver</h3>
+                                <p class="product-details">195/55 R15 85V - Econômico</p>
+                                <p class="product-price">R$ 450,00</p>
+                                <button class="product-button" data-id="103" data-name="Michelin Energy Saver Aro 15" data-price="450">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Aro 16 (Popular) -->
+                <div class="rim-size-section" data-rim="16">
+                    <h4 class="rim-title popular">Aro 16 <span class="popular-badge">MAIS VENDIDO</span></h4>
+                    <div class="products-grid">
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Bridgestone+Turanza+T005" alt="Bridgestone Turanza T005">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Bridgestone Turanza T005</h3>
+                                <p class="product-details">205/55 R16 91W - Conforto</p>
+                                <p class="product-price">R$ 520,00</p>
+                                <button class="product-button" data-id="104" data-name="Bridgestone Turanza T005 Aro 16" data-price="520">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Continental+PremiumContact+6" alt="Continental PremiumContact 6">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Continental PremiumContact 6</h3>
+                                <p class="product-details">215/55 R16 93V - Segurança</p>
+                                <p class="product-price">R$ 580,00</p>
+                                <button class="product-button" data-id="105" data-name="Continental PremiumContact 6 Aro 16" data-price="580">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Aro 17 (Popular) -->
+                <div class="rim-size-section" data-rim="17">
+                    <h4 class="rim-title popular">Aro 17 <span class="popular-badge">MAIS VENDIDO</span></h4>
+                    <div class="products-grid">
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Pneu+Aro+17" alt="Pneu Aro 17">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Pirelli P Zero Aro 17</h3>
+                                <p class="product-details">225/45 R17 91W - Performance</p>
+                                <p class="product-price">R$ 680,00</p>
+                                <button class="product-button" data-id="117" data-name="Pirelli P Zero Aro 17" data-price="680">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Pneu+Aro+17" alt="Pneu Aro 17">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Michelin Pilot Sport Aro 17</h3>
+                                <p class="product-details">235/45 R17 94Y - Esportivo</p>
+                                <p class="product-price">R$ 720,00</p>
+                                <button class="product-button" data-id="118" data-name="Michelin Pilot Sport Aro 17" data-price="720">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUVs -->
+            <div class="vehicle-category" data-category="suv">
+                <h3 class="category-title">Pneus para SUVs</h3>
+                
+                <!-- Aro 16 -->
+                <div class="rim-size-section" data-rim="16">
+                    <h4 class="rim-title">Aro 16</h4>
+                    <div class="products-grid">
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Pirelli+Scorpion+Verde" alt="Pirelli Scorpion Verde">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Pirelli Scorpion Verde</h3>
+                                <p class="product-details">235/70 R16 106T - SUV Ecológico</p>
+                                <p class="product-price">R$ 650,00</p>
+                                <button class="product-button" data-id="201" data-name="Pirelli Scorpion Verde Aro 16" data-price="650">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Goodyear+Wrangler+All-Terrain" alt="Goodyear Wrangler All-Terrain">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Goodyear Wrangler All-Terrain</h3>
+                                <p class="product-details">245/75 R16 110S - Todo Terreno</p>
+                                <p class="product-price">R$ 720,00</p>
+                                <button class="product-button" data-id="202" data-name="Goodyear Wrangler All-Terrain Aro 16" data-price="720">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Aro 17 -->
+                <div class="rim-size-section" data-rim="17">
+                    <h4 class="rim-title">Aro 17</h4>
+                    <div class="products-grid">
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Michelin+Latitude+Tour+HP" alt="Michelin Latitude Tour HP">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Michelin Latitude Tour HP</h3>
+                                <p class="product-details">235/65 R17 104H - SUV Performance</p>
+                                <p class="product-price">R$ 780,00</p>
+                                <button class="product-button" data-id="203" data-name="Michelin Latitude Tour HP Aro 17" data-price="780">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Bridgestone+Dueler+H/T+684" alt="Bridgestone Dueler H/T 684">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Bridgestone Dueler H/T 684</h3>
+                                <p class="product-details">245/65 R17 107T - SUV Conforto</p>
+                                <p class="product-price">R$ 740,00</p>
+                                <button class="product-button" data-id="204" data-name="Bridgestone Dueler H/T 684 Aro 17" data-price="740">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Aro 18 -->
+                <div class="rim-size-section" data-rim="18">
+                    <h4 class="rim-title">Aro 18</h4>
+                    <div class="products-grid">
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Pneu+SUV+Aro+18" alt="Pneu SUV Aro 18">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Continental CrossContact Aro 18</h3>
+                                <p class="product-details">255/55 R18 105V - SUV Luxo</p>
+                                <p class="product-price">R$ 850,00</p>
+                                <button class="product-button" data-id="218" data-name="Continental CrossContact Aro 18" data-price="850">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Pneu+SUV+Aro+18" alt="Pneu SUV Aro 18">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Yokohama Geolandar Aro 18</h3>
+                                <p class="product-details">265/60 R18 110H - SUV Aventura</p>
+                                <p class="product-price">R$ 890,00</p>
+                                <button class="product-button" data-id="219" data-name="Yokohama Geolandar Aro 18" data-price="890">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Aro 19 -->
+                <div class="rim-size-section" data-rim="19">
+                    <h4 class="rim-title">Aro 19</h4>
+                    <div class="products-grid">
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Pneu+SUV+Aro+19" alt="Pneu SUV Aro 19">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Pirelli Scorpion Zero Aro 19</h3>
+                                <p class="product-details">255/50 R19 107W - SUV Performance</p>
+                                <p class="product-price">R$ 980,00</p>
+                                <button class="product-button" data-id="220" data-name="Pirelli Scorpion Zero Aro 19" data-price="980">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Aro 20 -->
+                <div class="rim-size-section" data-rim="20">
+                    <h4 class="rim-title">Aro 20</h4>
+                    <div class="products-grid">
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Pneu+SUV+Aro+20" alt="Pneu SUV Aro 20">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Michelin Latitude Sport Aro 20</h3>
+                                <p class="product-details">275/45 R20 110Y - SUV Esportivo</p>
+                                <p class="product-price">R$ 1.150,00</p>
+                                <button class="product-button" data-id="221" data-name="Michelin Latitude Sport Aro 20" data-price="1150">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Caminhonetes -->
+            <div class="vehicle-category" data-category="pickup">
+                <h3 class="category-title">Pneus para Caminhonetes</h3>
+                
+                <!-- Aro 16 -->
+                <div class="rim-size-section" data-rim="16">
+                    <h4 class="rim-title">Aro 16</h4>
+                    <div class="products-grid">
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Michelin+LTX+Force" alt="Michelin LTX Force">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Michelin LTX Force</h3>
+                                <p class="product-details">265/70 R16 112T - Pickup Todo Terreno</p>
+                                <p class="product-price">R$ 850,00</p>
+                                <button class="product-button" data-id="301" data-name="Michelin LTX Force Aro 16" data-price="850">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Goodyear+Wrangler+DuraTrac" alt="Goodyear Wrangler DuraTrac">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Goodyear Wrangler DuraTrac</h3>
+                                <p class="product-details">245/75 R16 110T - Pickup Off-Road</p>
+                                <p class="product-price">R$ 920,00</p>
+                                <button class="product-button" data-id="302" data-name="Goodyear Wrangler DuraTrac Aro 16" data-price="920">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Aro 17 -->
+                <div class="rim-size-section" data-rim="17">
+                    <h4 class="rim-title">Aro 17</h4>
+                    <div class="products-grid">
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Bridgestone+Dueler+A/T+001" alt="Bridgestone Dueler A/T 001">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Bridgestone Dueler A/T 001</h3>
+                                <p class="product-details">265/65 R17 112S - Pickup All-Terrain</p>
+                                <p class="product-price">R$ 980,00</p>
+                                <button class="product-button" data-id="303" data-name="Bridgestone Dueler A/T 001 Aro 17" data-price="980">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Pirelli+Scorpion+ATR" alt="Pirelli Scorpion ATR">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Pirelli Scorpion ATR</h3>
+                                <p class="product-details">275/65 R17 115T - Pickup Performance</p>
+                                <p class="product-price">R$ 950,00</p>
+                                <button class="product-button" data-id="304" data-name="Pirelli Scorpion ATR Aro 17" data-price="950">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Aro 18 -->
+                <div class="rim-size-section" data-rim="18">
+                    <h4 class="rim-title">Aro 18</h4>
+                    <div class="products-grid">
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Pneu+Pickup+Aro+18" alt="Pneu Pickup Aro 18">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">BFGoodrich All-Terrain Aro 18</h3>
+                                <p class="product-details">275/65 R18 116T - Pickup Off-Road</p>
+                                <p class="product-price">R$ 1.050,00</p>
+                                <button class="product-button" data-id="318" data-name="BFGoodrich All-Terrain Aro 18" data-price="1050">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Aro 20 -->
+                <div class="rim-size-section" data-rim="20">
+                    <h4 class="rim-title">Aro 20</h4>
+                    <div class="products-grid">
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Pneu+Pickup+Aro+20" alt="Pneu Pickup Aro 20">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Toyo Open Country Aro 20</h3>
+                                <p class="product-details">275/55 R20 113S - Pickup Luxo</p>
+                                <p class="product-price">R$ 1.250,00</p>
+                                <button class="product-button" data-id="320" data-name="Toyo Open Country Aro 20" data-price="1250">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Aro 22 -->
+                <div class="rim-size-section" data-rim="22">
+                    <h4 class="rim-title">Aro 22</h4>
+                    <div class="products-grid">
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300x180/1e40af/ffffff?text=Pneu+Pickup+Aro+22" alt="Pneu Pickup Aro 22">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Nitto Ridge Grappler Aro 22</h3>
+                                <p class="product-details">305/40 R22 118V - Pickup Premium</p>
+                                <p class="product-price">R$ 1.450,00</p>
+                                <button class="product-button" data-id="322" data-name="Nitto Ridge Grappler Aro 22" data-price="1450">ADICIONAR AO CARRINHO</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de Serviços -->
+    <section class="services-section" id="services">
+        <div class="container">
+            <h2 class="section-title">NOSSOS SERVIÇOS</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">🚚</div>
+                    <h3 class="service-title">Entrega pelos Correios</h3>
+                    <p>Entregamos em todo o Brasil via Correios (PAC e SEDEX)</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">💳</div>
+                    <h3 class="service-title">Pagamento Seguro</h3>
+                    <p>Processamos seus pagamentos com total segurança via PIX</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">📞</div>
+                    <h3 class="service-title">Atendimento Online</h3>
+                    <p>Equipe especializada para tirar suas dúvidas sobre pneus</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🔧</div>
+                    <h3 class="service-title">Indicação de Oficinas</h3>
+                    <p>Indicamos oficinas parceiras para montagem dos pneus</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-logo">PNEUBRARTO</div>
+            <div class="contact-info">
+                <p>CNPJ: 52.316.278/0001-76</p>
+                <p>Telefone/WhatsApp: (17) 5353-3970</p>
+                <p>Email: contato@pneubrarto.com.br</p>
+                <p>Loja Virtual - Atendimento em todo o Brasil</p>
+            </div>
+            <div class="social-links">
+                <a href="#" title="Instagram">📷</a>
+                <a href="#" title="Facebook">📘</a>
+                <a href="#" title="WhatsApp">📱</a>
+            </div>
+            <p class="copyright">© 2023 PNEUBRARTO - Todos os direitos reservados</p>
+        </div>
+    </footer>
+
+    <script>
+        // Dados do carrinho
+        let cart = [];
+        let shippingCost = 0;
+        let selectedShippingType = '';
+        
+        // Elementos do DOM
+        const cartIcon = document.getElementById('cartIcon');
+        const cartSidebar = document.getElementById('cartSidebar');
+        const cartOverlay = document.getElementById('cartOverlay');
+        const closeCart = document.getElementById('closeCart');
+        const cartItems = document.getElementById('cartItems');
+        const cartCount = document.getElementById('cartCount');
+        const cartSubtotal = document.getElementById('cartSubtotal');
+        const cartTotal = document.getElementById('cartTotal');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        const paymentModal = document.getElementById('paymentModal');
+        const closePayment = document.getElementById('closePayment');
+        const copyPixKey = document.getElementById('copyPixKey');
+        const pixKey = document.getElementById('pixKey');
+        const shippingModal = document.getElementById('shippingModal');
+        const closeShipping = document.getElementById('closeShipping');
+        const shippingForm = document.getElementById('shippingForm');
+        const shippingResult = document.getElementById('shippingResult');
+        const correiosShipping = document.getElementById('correiosShipping');
+        const sedexShipping = document.getElementById('sedexShipping');
+        const selectShipping = document.getElementById('selectShipping');
+        const shippingCostContainer = document.getElementById('shippingCostContainer');
+        const shippingCostElement = document.getElementById('shippingCost');
+        
+        // Funções do carrinho
+        function updateCart() {
+            // Limpa os itens do carrinho
+            cartItems.innerHTML = '';
+            
+            // Atualiza contador
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+            
+            // Atualiza subtotal
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            cartSubtotal.textContent = subtotal.toFixed(2).replace('.', ',');
+            
+            // Atualiza total
+            const total = subtotal + shippingCost;
+            cartTotal.textContent = total.toFixed(2).replace('.', ',');
+            
+            // Adiciona itens ao carrinho
+            cart.forEach(item => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <div class="item-info">
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-price">R$ ${item.price.toFixed(2).replace('.', ',')}</div>
+                        <div class="item-quantity">
+                            <button class="quantity-btn minus" data-id="${item.id}">-</button>
+                            <span class="quantity">${item.quantity}</span>
+                            <button class="quantity-btn plus" data-id="${item.id}">+</button>
+                        </div>
+                    </div>
+                    <button class="remove-item" data-id="${item.id}">🗑️</button>
+                `;
+                cartItems.appendChild(cartItem);
+            });
+            
+            // Adiciona event listeners para os botões de quantidade
+            document.querySelectorAll('.quantity-btn.minus').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const id = e.target.getAttribute('data-id');
+                    decreaseQuantity(id);
+                });
+            });
+            
+            document.querySelectorAll('.quantity-btn.plus').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const id = e.target.getAttribute('data-id');
+                    increaseQuantity(id);
+                });
+            });
+            
+            // Adiciona event listeners para os botões de remover
+            document.querySelectorAll('.remove-item').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const id = e.target.getAttribute('data-id');
+                    removeFromCart(id);
+                });
+            });
+            
+            // Salva carrinho no localStorage
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+        
+        function addToCart(id, name, price) {
+            const existingItem = cart.find(item => item.id === id);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id,
+                    name,
+                    price,
+                    quantity: 1
+                });
+            }
+            
+            updateCart();
+            showNotification(`${name} adicionado ao carrinho!`);
+        }
+        
+        function increaseQuantity(id) {
+            const item = cart.find(item => item.id === id);
+            if (item) {
+                item.quantity += 1;
+                updateCart();
+            }
+        }
+        
+        function decreaseQuantity(id) {
+            const item = cart.find(item => item.id === id);
+            if (item && item.quantity > 1) {
+                item.quantity -= 1;
+                updateCart();
+            } else {
+                removeFromCart(id);
+            }
+        }
+        
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCart();
+        }
+        
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background-color: #10b981;
+                color: white;
+                padding: 15px 20px;
+                border-radius: 5px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+                z-index: 3000;
+                transition: all 0.3s;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+        
+        // Funções de pagamento
+        function generateQRCode() {
+            // Limpa QR code anterior
+            document.getElementById('qrcode').innerHTML = '';
+            
+            // Gera novo QR code
+            const qrCode = new QRCode(document.getElementById('qrcode'), {
+                text: `00020126580014br.gov.bcb.pix0136175353397005204000053039865802BR5925PNEUBRARTO COMERCIO LTDA6009SAO PAULO62140510${Math.random().toString(36).substring(2, 12)}6304`,
+                width: 200,
+                height: 200,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+        
+        // Funções de frete - Correios
+        function calculateShipping(cep) {
+            // Simulação de cálculo de frete baseado no CEP
+            // Valores baseados nas tarifas reais dos Correios para pneus
+            
+            // Peso médio de um pneu (kg)
+            const tireWeight = 8;
+            const totalWeight = cart.reduce((sum, item) => sum + (tireWeight * item.quantity), 0);
+            
+            // Distância baseada no CEP (simulação)
+            const distanceFactor = Math.floor(Math.random() * 5) + 1;
+            
+            // Correios PAC - mais econômico
+            const correiosBase = 25;
+            const correiosCost = (correiosBase + (totalWeight * 2) + (distanceFactor * 3)).toFixed(2);
+            
+            // SEDEX - mais rápido
+            const sedexBase = 35;
+            const sedexCost = (sedexBase + (totalWeight * 3) + (distanceFactor * 5)).toFixed(2);
+            
+            return {
+                correios: correiosCost,
+                sedex: sedexCost
+            };
+        }
+        
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Carrega carrinho do localStorage
+            const savedCart = localStorage.getItem('cart');
+            if (savedCart) {
+                cart = JSON.parse(savedCart);
+                updateCart();
+            }
+            
+            // Adiciona event listeners para os botões de produto
+            document.querySelectorAll('.product-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const id = e.target.getAttribute('data-id');
+                    const name = e.target.getAttribute('data-name');
+                    const price = parseFloat(e.target.getAttribute('data-price'));
+                    addToCart(id, name, price);
+                });
+            });
+            
+            // Abrir/fechar carrinho
+            cartIcon.addEventListener('click', () => {
+                cartSidebar.classList.add('active');
+                cartOverlay.classList.add('active');
+            });
+            
+            closeCart.addEventListener('click', () => {
+                cartSidebar.classList.remove('active');
+                cartOverlay.classList.remove('active');
+            });
+            
+            cartOverlay.addEventListener('click', () => {
+                cartSidebar.classList.remove('active');
+                cartOverlay.classList.remove('active');
+            });
+            
+            // Finalizar compra
+            checkoutBtn.addEventListener('click', () => {
+                if (cart.length === 0) {
+                    showNotification('Seu carrinho está vazio!');
+                    return;
+                }
+                
+                // Abre modal de frete
+                shippingModal.classList.add('active');
+                cartSidebar.classList.remove('active');
+                cartOverlay.classList.remove('active');
+            });
+            
+            // Fechar modal de pagamento
+            closePayment.addEventListener('click', () => {
+                paymentModal.classList.remove('active');
+                // Limpa carrinho após pagamento
+                cart = [];
+                updateCart();
+                shippingCost = 0;
+                shippingCostContainer.style.display = 'none';
+                selectedShippingType = '';
+            });
+            
+            // Copiar chave PIX
+            copyPixKey.addEventListener('click', () => {
+                navigator.clipboard.writeText(pixKey.textContent)
+                    .then(() => {
+                        showNotification('Chave PIX copiada!');
+                    })
+                    .catch(err => {
+                        console.error('Erro ao copiar chave PIX: ', err);
+                    });
+            });
+            
+            // Fechar modal de frete
+            closeShipping.addEventListener('click', () => {
+                shippingModal.classList.remove('active');
+                // Reseta seleção de frete
+                document.querySelectorAll('.shipping-option').forEach(option => {
+                    option.classList.remove('selected');
+                });
+                selectShipping.disabled = true;
+                shippingResult.style.display = 'none';
+            });
+            
+            // Calcular frete
+            shippingForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const cep = document.getElementById('cep').value;
+                
+                if (cep.length !== 8 || isNaN(cep)) {
+                    showNotification('CEP inválido! Digite um CEP com 8 dígitos.');
+                    return;
+                }
+                
+                const shippingOptions = calculateShipping(cep);
+                correiosShipping.textContent = `R$ ${shippingOptions.correios.replace('.', ',')}`;
+                sedexShipping.textContent = `R$ ${shippingOptions.sedex.replace('.', ',')}`;
+                
+                shippingResult.style.display = 'block';
+            });
+            
+            // Selecionar opção de frete
+            document.querySelectorAll('.shipping-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    // Remove seleção anterior
+                    document.querySelectorAll('.shipping-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    // Adiciona seleção atual
+                    option.classList.add('selected');
+                    
+                    // Habilita botão de seleção
+                    selectShipping.disabled = false;
+                    
+                    // Define o tipo de frete selecionado
+                    selectedShippingType = option.getAttribute('data-shipping');
+                });
+            });
+            
+            // Selecionar frete
+            selectShipping.addEventListener('click', () => {
+                if (!selectedShippingType) {
+                    showNotification('Selecione uma opção de frete!');
+                    return;
+                }
+                
+                // Calcula o custo do frete selecionado
+                const selectedOption = document.querySelector('.shipping-option.selected');
+                const shippingText = selectedOption.querySelector('span').textContent;
+                shippingCost = parseFloat(shippingText.replace('R$ ', '').replace(',', '.'));
+                shippingCostElement.textContent = shippingCost.toFixed(2).replace('.', ',');
+                shippingCostContainer.style.display = 'block';
+                
+                // Atualiza carrinho
+                updateCart();
+                
+                // Fecha modal de frete e abre modal de pagamento
+                shippingModal.classList.remove('active');
+                paymentModal.classList.add('active');
+                generateQRCode();
+                
+                // Reseta seleção
+                document.querySelectorAll('.shipping-option').forEach(option => {
+                    option.classList.remove('selected');
+                });
+                selectShipping.disabled = true;
+                shippingResult.style.display = 'none';
+            });
+            
+            // Filtros de catálogo
+            const vehicleTypeFilter = document.getElementById('vehicleType');
+            const rimSizeFilter = document.getElementById('rimSize');
+            
+            function filterProducts() {
+                const selectedVehicle = vehicleTypeFilter.value;
+                const selectedRim = rimSizeFilter.value;
+                
+                document.querySelectorAll('.vehicle-category').forEach(category => {
+                    const categoryType = category.getAttribute('data-category');
+                    
+                    if (selectedVehicle === 'all' || selectedVehicle === categoryType) {
+                        category.style.display = 'block';
+                        
+                        // Filtra por aro dentro da categoria
+                        category.querySelectorAll('.rim-size-section').forEach(rimSection => {
+                            const rimSize = rimSection.getAttribute('data-rim');
+                            
+                            if (selectedRim === 'all' || selectedRim === rimSize) {
+                                rimSection.style.display = 'block';
+                            } else {
+                                rimSection.style.display = 'none';
+                            }
+                        });
+                    } else {
+                        category.style.display = 'none';
+                    }
+                });
+            }
+            
+            vehicleTypeFilter.addEventListener('change', filterProducts);
+            rimSizeFilter.addEventListener('change', filterProducts);
+        });
+    </script>
+</body>
+</html>
